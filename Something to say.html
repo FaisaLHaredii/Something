@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sesuatu yang tak bisa diungkapkan 💌</title>
+  <meta name="description" content="Website lucu untuk menyatakan cinta dengan tombol Terima dan Tolak (yang nakal & tidak bisa diklik)." />
+  <style>
+    :root {
+      --bg: pink;
+      --card: #ffffffee;
+      --text: #1f2937;
+      --accent: #ef4444; /* merah hati */
+      --accent-2: #10b981; /* hijau */
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text);
+      background: var(--bg) url('https://png.pngtree.com/png-clipart/20201209/original/pngtree-pink-heart-pattern-background-png-image_5659147.jpg');
+      background-size: cover;
+      background-position: center;
+      display: grid;
+      place-items: center;
+      overflow-x: hidden;
+    }
+    .card {
+      width: min(92vw, 720px);
+      background: var(--card);
+      border-radius: 24px;
+      box-shadow: 0 20px 50px rgba(0,0,0,.12);
+      padding: clamp(18px, 3.8vw, 32px);
+      position: relative;
+      overflow: hidden;
+    }
+    .ribbon {
+      display: none;
+    }
+    h1 { margin: 0 0 8px; font-size: clamp(26px, 4.8vw, 40px); line-height: 1.1; }
+    p.lead { margin: 0 0 20px; font-size: clamp(15px, 2.6vw, 18px); opacity: .9; }
+
+    .photo {
+      display: grid; place-items: center; margin: 12px 0 24px; position: relative;
+    }
+    .heart {
+      font-size: 42px; animation: float 4s ease-in-out infinite; filter: drop-shadow(0 6px 16px rgba(239,68,68,.4));
+    }
+    @keyframes float { 0%,100%{ transform: translateY(0)} 50%{ transform: translateY(-10px)} }
+
+    .buttons {
+      position: relative; width: 100%; height: 120px;
+    }
+    .btns {
+      position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+      display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+      width: 100%;
+    }
+    button {
+      border: 0; cursor: pointer; padding: 12px 18px; border-radius: 999px; font-weight: 700; font-size: 16px;
+      transition: transform .15s ease, box-shadow .15s ease, background .2s ease; outline: none;
+      box-shadow: 0 8px 22px rgba(0,0,0,.1);
+    }
+    .yes { background: var(--accent-2); color: white; }
+    .yes:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 10px 24px rgba(16,185,129,.35); }
+    .no { background: #efefef; color: #6b7280; position: absolute; }
+
+    .footer { text-align: center; margin-top: 14px; font-size: 13px; opacity: .8; }
+
+    .modal {
+      position: fixed; inset: 0; background: rgba(0,0,0,.45); display: none; align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal.active { display: flex; }
+    .modal-card {
+      width: min(92vw, 560px); background: white; border-radius: 20px; padding: 24px; text-align: center;
+      box-shadow: 0 20px 50px rgba(0,0,0,.25);
+    }
+    .modal-card h2 { margin: 0 0 8px; font-size: clamp(22px, 4.2vw, 32px); }
+    .modal-card p { margin: 0 0 18px; }
+    .share {
+      display: inline-flex; align-items: center; gap: 8px; background: #25D366; color: #fff; padding: 12px 16px; border-radius: 999px; font-weight: 700; text-decoration: none;
+      box-shadow: 0 8px 22px rgba(37,211,102,.35);
+    }
+    .close { margin-top: 12px; background: #111827; color: white; }
+
+    .confetti { position: fixed; pointer-events: none; inset: 0; overflow: hidden; }
+    .piece { position: absolute; width: 10px; height: 16px; opacity: .9; will-change: transform, opacity; }
+
+    @media (max-width: 460px) {
+      .buttons { height: 160px; }
+    }
+  </style>
+</head>
+<body>
+  <audio autoplay loop>
+    <source src="https://www.bensound.com/bensound-music/bensound-romantic.mp3" type="audio/mpeg">
+  </audio>
+
+  <div class="card" id="card">
+    <h1 id="title">Hai, <span id="herName">Kamu</span> ✨</h1>
+    <p class="lead" id="lead">Aku punya satu pertanyaan penting. Jawabnya jujur ya…</p>
+
+    <div class="photo" aria-hidden="true">
+      <div class="heart">❤️</div>
+    </div>
+
+    <p style="text-align:center; font-size: clamp(18px,3vw,22px); font-weight:700; margin-bottom: 6px;">Maukah kamu jadi pacarku? 🥹</p>
+
+    <div class="buttons" id="arena">
+      <div class="btns">
+        <button class="yes" id="yesBtn" aria-label="Terima">💚 Terima</button>
+        <button class="no" id="noBtn" aria-label="Tolak" title="Eh… nggak bisa 🙈">🚫 Tolak</button>
+      </div>
+    </div>
+
+    <div class="footer">Website lucu by <span id="yourName">Aku</span> • Dibuat khusus untukmu 💖</div>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="modal-card">
+      <h2>Yeaay! 😍</h2>
+      <p id="acceptText">Mulai sekarang kita resmi jadian! Terima kasih sudah menerima aku. 💘</p>
+      <a id="waShare" class="share" href="#" target="_blank" rel="noopener">Bagikan via WhatsApp</a>
+      <br>
+      <button class="close" id="closeModal">Tutup</button>
+    </div>
+  </div>
+
+  <div class="confetti" id="confetti"></div>
+
+  <script>
+    const YOUR_NAME = "FHY";
+    const HER_NAME  = "SAT";
+
+    document.getElementById('yourName').textContent = YOUR_NAME;
+    document.getElementById('herName').textContent  = HER_NAME;
+
+    const noBtn = document.getElementById('noBtn');
+    const yesBtn = document.getElementById('yesBtn');
+    const arena = document.getElementById('arena');
+    const modal = document.getElementById('modal');
+    const closeModal = document.getElementById('closeModal');
+    const waShare = document.getElementById('waShare');
+    const confettiRoot = document.getElementById('confetti');
+
+    function randomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+    function moveNoButton() {
+      const areaRect = arena.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
+      const maxLeft = areaRect.width - btnRect.width - 16;
+      const maxTop  = areaRect.height - btnRect.height - 16;
+      const left = randomInt(16, Math.max(16, maxLeft));
+      const top  = randomInt(16, Math.max(16, maxTop));
+      noBtn.style.left = left + 'px';
+      noBtn.style.top  = top  + 'px';
+    }
+    moveNoButton();
+
+    noBtn.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); moveNoButton(); });
+    noBtn.addEventListener('pointerdown', e => { e.preventDefault(); moveNoButton(); });
+    noBtn.addEventListener('mouseenter', moveNoButton);
+    noBtn.addEventListener('touchstart', e => { e.preventDefault(); moveNoButton(); }, { passive: false });
+    noBtn.setAttribute('tabindex', '-1');
+    noBtn.setAttribute('aria-disabled', 'true');
+
+    function launchConfetti() {
+      const count = 120;
+      const durMin = 1200, durMax = 2400;
+      const w = window.innerWidth, h = window.innerHeight;
+      for (let i = 0; i < count; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'piece';
+        piece.style.left = Math.random() * w + 'px';
+        piece.style.top = '-20px';
+        piece.style.background = `hsl(${Math.floor(Math.random()*360)} 90% 60%)`;
+        const fall = randomInt(durMin, durMax);
+        const drift = (Math.random() * 200 - 100);
+        piece.animate([
+          { transform: 'translate(0, 0) rotate(0deg)', opacity: 1 },
+          { transform: `translate(${drift}px, ${h + 40}px) rotate(${randomInt(90, 360)}deg)`, opacity: 0.9 }
+        ], { duration: fall, easing: 'cubic-bezier(.2,.8,.2,1)', iterations: 1 });
+        confettiRoot.appendChild(piece);
+        setTimeout(() => piece.remove(), fall + 100);
+      }
+    }
+
+    yesBtn.addEventListener('click', () => {
+      const msg = `Hai ${HER_NAME}! \nAku, ${YOUR_NAME}, suka banget sama kamu. Mau nggak jadi pacarku? 💖`;
+      const waURL = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+      waShare.href = waURL;
+      document.getElementById('acceptText').textContent = `Terima kasih, ${HER_NAME}! Kamu sudah bikin ${YOUR_NAME} jadi orang paling bahagia hari ini. 💘`;
+      modal.classList.add('active');
+      launchConfetti();
+    });
+
+    closeModal.addEventListener('click', () => {
+      modal.classList.remove('active');
+    });
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) modal.classList.remove('active');
+    });
+
+    noBtn.addEventListener('focus', () => { moveNoButton(); noBtn.blur(); });
+  </script>
+</body>
+</html>
